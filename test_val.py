@@ -144,8 +144,10 @@ class Detector(object):
         image = cv2.imread(imagename)
         result = self.detect(image)
         self.draw(image, result)
-        cv2.imshow('Image', image)
-        cv2.waitKey(0)
+        cv2.imwrite('haha.jpg', image)
+        # cv2.imshow('Image', image)
+
+        # cv2.waitKey(0)
 
 
     def video_detect(self, cap):
@@ -186,8 +188,29 @@ def main():
     #detector.video_detect(cap)
 
     #detect the image
-    imagename = './test/01.jpg'
+    imagename = 'Image_20190630110907.jpg'
     detector.image_detect(imagename)
 
 if __name__ == '__main__':
-    main()
+    parser = argparse.ArgumentParser()
+    parser.add_argument('--weights', default = 'yolo_v2.ckpt', type = str)    # darknet-19.ckpt
+    parser.add_argument('--weight_dir', default = 'output', type = str)
+    parser.add_argument('--data_dir', default = 'data', type = str)
+    parser.add_argument('--gpu', default = '', type = str)    # which gpu to be selected
+    args = parser.parse_args()
+
+    os.environ['CUDA_VISIBLE_DEVICES'] = args.gpu    # configure gpu
+    weights_file = os.path.join(args.data_dir, args.weight_dir, args.weights)
+    yolo = yolo_v2(False)    # 'False' mean 'test'
+    # yolo = Darknet19(False)
+
+    detector = Detector(yolo, weights_file)
+
+    #detect the video
+    #cap = cv2.VideoCapture('asd.mp4')
+    #cap = cv2.VideoCapture(0)
+    #detector.video_detect(cap)
+
+    #detect the image
+    imagename = 'Image_20190630110907.jpg'
+    detector.image_detect(imagename)
